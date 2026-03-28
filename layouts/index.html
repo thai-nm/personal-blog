@@ -1,0 +1,13 @@
+{{ define "main" }}
+<div class="home">
+  <div class="posts-list">
+    {{ range (where .Site.RegularPages "Section" "posts") }}
+    <a href="{{ .Permalink }}" class="post-card">
+      <div class="post-meta">{{ .Date.Format "Jan 02, 2006" }} • {{ .ReadingTime }} MIN READ</div>
+      <h2>{{ .Title }}</h2>
+      <p style="color: var(--text-secondary); margin: 0; font-size: 0.95rem;">{{ .Summary | truncate 140 }}</p>
+    </a>
+    {{ end }}
+  </div>
+</div>
+{{ end }}

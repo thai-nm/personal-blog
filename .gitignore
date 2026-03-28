@@ -1,0 +1,33 @@
+# Hugo
+public/
+resources/
+
+# Build artifacts
+.hugo_build.lock
+
+# OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE
+*.sublime-project
+*.sublime-workspace
+
+# Temporary files
+*.tmp
+*.temp

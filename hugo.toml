@@ -1,0 +1,11 @@
+baseURL = 'http://blog.local/'
+languageCode = 'en-us'
+title = "Thai Station"
+# theme = 'custom'
+
+[params]
+    author.name = 'Thai Nguyen'
+    description = 'DevOps, SRE, Cloud, System, etc.'
+    avatar = '/images/avatar.png'
+    github = 'https://github.com/thai-nm'
+    linkedin = 'https://linkedin.com/in/thai-nm'
