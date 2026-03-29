@@ -1,28 +1,14 @@
 ---
 title: "About"
+date: 2026-03-29
+draft: false
 ---
 
-## About Me
+### Hello 👋 
+### I'm Thái, a flexible and adaptable professional
 
-Welcome to my personal blog! I'm a passionate developer and technology enthusiast dedicated to sharing knowledge and insights about software development, design patterns, and modern web technologies.
+I currently work as a DevOps Engineer 🧑🏻‍💻 at an American gaming company with an office in Hanoi. I was fortunate to begin learning and exploring DevOps-related knowledge during my second year as a student. While I've encountered many professionals who started their DevOps journey even earlier, I've remained one of the youngest team members throughout my tenure at both companies where I've worked.
 
-With a strong foundation in full-stack development, I enjoy building scalable applications and exploring new technologies. I believe in continuous learning and sharing what I discover along the way.
+This website serves as a platform to share my thoughts, experiences, knowledge, and professional insights with the community.
 
-## Skills
-
-- **Languages**: JavaScript, TypeScript, Python, Go, Bash
-- **Frontend**: React, Vue.js, HTML5, CSS3, Tailwind CSS
-- **Backend**: Node.js, Express, Django, FastAPI
-- **Databases**: PostgreSQL, MongoDB, Redis
-- **DevOps**: Docker, Kubernetes, Terraform, Ansible
-- **Tools**: Git, VS Code, Linux, AWS
-
-## Interests
-
-- Cloud Architecture & Infrastructure as Code
-- Full-Stack Web Development
-- Open Source Contribution
-- Technical Writing & Documentation
-- System Design & Performance Optimization
-
-Feel free to reach out through the social links in the header if you'd like to connect or discuss any topics!
+Thank you sincerely for reading. I hope to provide some value to you 😄
