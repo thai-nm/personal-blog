@@ -147,6 +147,16 @@ main {
   text-decoration: none;
   display: block;
   background-color: transparent;
+  color: inherit;
+}
+
+.post-card a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.post-card a:hover {
+  color: var(--accent-color);
 }
 
 .post-card:last-child {
