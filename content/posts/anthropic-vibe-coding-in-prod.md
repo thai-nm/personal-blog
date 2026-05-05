@@ -11,7 +11,7 @@ I accidentially came across this video from a post on Facebook. As a DevOps engi
 
 Those are questions I have for so many weeks. And this video answers some aspects of those.
 
-https://youtu.be/fHWFF_pnqDk?si=r_os-5akxk0YhAm2
+{{< youtube fHWFF_pnqDk >}}
 
 It's about how we can vibe-code for production use. I think it does a very good job of demonstrating new approaches to collaborate with AI (i.e., managing AI like a PM), why we can become a bottleneck if we don’t adapt, and how we can build or refactor existing codebases and systems.
 
