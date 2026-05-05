@@ -220,6 +220,7 @@ main {
   display: block;
   background-color: transparent;
   color: inherit;
+  border-radius: 12px;
 }
 
 .post-card a {
