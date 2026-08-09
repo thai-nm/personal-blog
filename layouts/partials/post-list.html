@@ -1,0 +1,66 @@
+{{/* Expects a dict: pages, title, showFeature (bool), limit (int, 0 = no limit) */}}
+{{ $pages := .pages }}
+{{ $title := .title }}
+{{ $showFeature := .showFeature }}
+{{ $limit := .limit }}
+
+{{ $feature := "" }}
+{{ $rest := $pages }}
+{{ if and $showFeature (gt (len $pages) 0) }}
+  {{ $feature = index $pages 0 }}
+  {{ $rest = after 1 $pages }}
+{{ end }}
+
+{{ $list := $rest }}
+{{ $hidden := 0 }}
+{{ if and $limit (gt $limit 0) (gt (len $rest) $limit) }}
+  {{ $list = first $limit $rest }}
+  {{ $hidden = sub (len $rest) $limit }}
+{{ end }}
+
+<div class="list-head">
+  <h1>{{ $title }}</h1>
+  <div class="list-count">{{ len $pages }} post{{ if ne (len $pages) 1 }}s{{ end }}</div>
+</div>
+
+{{ with $feature }}
+  {{ $t := partial "tint.html" . }}
+  <article class="feature-article" style="--tint: {{ $t.tint }}; --soft: {{ $t.soft }};">
+    <a href="{{ .Permalink }}">
+      <div class="feature-meta">
+        {{ with $t.category }}<span class="section-label">/{{ . }}</span>{{ end }}
+        <span>{{ .Date.Format "January 2, 2006" }}</span>
+        <span>{{ .ReadingTime }} min read</span>
+      </div>
+      <h2>{{ .Title }}</h2>
+      <p>{{ .Params.dek | default .Summary }}</p>
+      {{ with .Params.tags }}
+      <div class="tag-row">
+        {{ range . }}<span class="tag-chip">{{ . }}</span>{{ end }}
+      </div>
+      {{ end }}
+    </a>
+  </article>
+{{ end }}
+
+<ul class="post-index">
+  {{ range $list }}
+    {{ $t := partial "tint.html" . }}
+    <li class="post-row-item">
+      <a href="{{ .Permalink }}" class="post-row" style="--tint: {{ $t.tint }}; --soft: {{ $t.soft }};">
+        <div class="post-row-date">
+          <span class="date">{{ .Date.Format "jan 02" }}</span>
+          <span class="read">{{ .ReadingTime }} min read</span>
+        </div>
+        <div class="post-row-body">
+          <span class="post-row-title">{{ .Title }}</span>
+          <div class="post-row-dek">{{ .Params.dek | default .Summary | truncate 160 }}</div>
+        </div>
+      </a>
+    </li>
+  {{ end }}
+</ul>
+
+{{ if gt $hidden 0 }}
+<a href="/archive/" class="more-link">{{ $hidden }} older post{{ if ne $hidden 1 }}s{{ end }} in the archive &rarr;</a>
+{{ end }}

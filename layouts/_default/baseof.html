@@ -7,159 +7,135 @@
   <title>{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} | {{ .Site.Title }}{{ end }}</title>
   <link rel="icon" type="image/png" href="/images/favicon.png">
   <link rel="apple-touch-icon" href="/images/avatar.png">
-  <link rel="stylesheet" href="/css/style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,300;1,6..72,400&family=JetBrains+Mono:wght@400;500&display=swap"
     rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <link rel="stylesheet" href="/css/style.css">
   <script>
-    // Prevent flash of unstyled content by applying theme before body renders
     (function () {
-      const currentTheme = localStorage.getItem('theme');
-      if (currentTheme === 'dark' || (!currentTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.documentElement.setAttribute('data-theme', 'dark');
-      }
+      const saved = localStorage.getItem('ts-theme');
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = saved || (prefersDark ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
     })();
   </script>
-  <style>
-    /* Ensure data-theme works on html or body */
-    [data-theme="dark"],
-    body[data-theme="dark"] {
-      --bg-color: #0f0f0e !important;
-      --text-primary: #e8e8e8 !important;
-      --text-secondary: #a0a0a0 !important;
-      --accent-color: #e68a6e !important;
-      --border-color: #2a2a28 !important;
-      --card-bg: #161614 !important;
-      --hover-bg: #1c1c1a !important;
-    }
-  </style>
 </head>
 
 <body>
-  <div class="container">
-    <header>
-      <img src="{{ .Site.Params.avatar | default " /images/avatar.png" }}" alt="Avatar" class="avatar">
-      <a href="/" class="site-title">{{ .Site.Title }}</a>
-      <p class="site-description">{{ .Site.Params.description }}</p>
-      <div class="social-links">
-        {{ with .Site.Params.github }}
-        <a href="{{ . }}" target="_blank" rel="noopener" aria-label="GitHub">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path
-              d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7a3.37 3.37 0 0 0-.94 2.58V22">
-            </path>
-          </svg>
-        </a>
-        {{ end }}
-        {{ with .Site.Params.linkedin }}
-        <a href="{{ . }}" target="_blank" rel="noopener" aria-label="LinkedIn">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
-            <rect x="2" y="9" width="4" height="12"></rect>
-            <circle cx="4" cy="4" r="2"></circle>
-          </svg>
-        </a>
-        {{ end }}
-        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Theme">
-          <svg id="sun-icon" style="display: none;" width="20" height="20" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="5"></circle>
-            <line x1="12" y1="1" x2="12" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="23"></line>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-            <line x1="1" y1="12" x2="3" y2="12"></line>
-            <line x1="21" y1="12" x2="23" y2="12"></line>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-          </svg>
-          <svg id="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-          </svg>
-        </button>
+  <div class="top-rule"><span></span><span></span></div>
+
+  {{ $cat := .Params.category | default "" }}
+  {{ $isDevops := eq $cat "devops" }}
+  {{ $isLife := eq $cat "life" }}
+  <header class="site-header">
+    <div class="site-header-row">
+      <div class="site-brand">
+        <a href="/" class="site-title">{{ .Site.Title }}</a>
+        <div class="site-tagline">{{ .Site.Params.tagline }}</div>
       </div>
-      <nav>
-        <a href="/" {{ if .IsHome }}class="active" {{ end }}>Home</a>
-        <a href="/posts" {{ if eq .Section "posts" }}class="active" {{ end }}>Posts</a>
-        <a href="/about" {{ if eq .Title "About" }}class="active" {{ end }}>About</a>
-      </nav>
-    </header>
-    <main>
+      <div class="header-right">
+        <nav class="site-nav">
+          <a href="/" class="{{ if .IsHome }}active neutral{{ end }}">latest</a>
+          <a href="/devops/" class="{{ if $isDevops }}active devops{{ end }}">/devops</a>
+          <a href="/life/" class="{{ if $isLife }}active life{{ end }}">/life</a>
+          <a href="/archive/" class="{{ if eq .Title "Archive" }}active neutral{{ end }}">archive</a>
+          <a href="/about/" class="{{ if eq .Title "About" }}active neutral{{ end }}">about</a>
+        </nav>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Theme">dark mode</button>
+      </div>
+    </div>
+    {{ $allPosts := where .Site.RegularPages "Section" "posts" }}
+    <div class="stamp-row">
+      <span>{{ len $allPosts }} posts since {{ (index (sort $allPosts "Date") 0).Date.Format "2006" }}</span>
+      {{ with (index (sort $allPosts "Date" "desc") 0) }}<span>Updated {{ .Date.Format "January 2, 2006" }}</span>{{ end }}
+      {{ with .Site.Params.location }}<span>{{ . }}</span>{{ end }}
+    </div>
+  </header>
+
+  <div class="page-grid">
+    <main class="content">
       {{ block "main" . }}{{ end }}
     </main>
-    <footer>
-      <div>&copy; {{ now.Format "2006" }} {{ .Site.Title }}</div>
-    </footer>
+    {{ partial "sidebar.html" . }}
   </div>
 
+  <footer class="site-footer">
+    <span>{{ .Site.Title }} &mdash; {{ .Site.Params.description }}</span>
+    <span class="footer-links">
+      <a href="/about/">about</a>
+      {{ with .Site.Params.github }}<a href="{{ . }}" target="_blank" rel="noopener">github</a>{{ end }}
+      {{ with .Site.Params.linkedin }}<a href="{{ . }}" target="_blank" rel="noopener">linkedin</a>{{ end }}
+    </span>
+  </footer>
+
   <script>
-    const themeToggle = document.getElementById('theme-toggle');
-    const sunIcon = document.getElementById('sun-icon');
-    const moonIcon = document.getElementById('moon-icon');
-    const html = document.documentElement;
-    const body = document.body;
+    (function () {
+      const toggle = document.getElementById('theme-toggle');
+      const html = document.documentElement;
 
-    function updateIcons(theme) {
-      if (theme === 'dark') {
-        sunIcon.style.display = 'block';
-        moonIcon.style.display = 'none';
-      } else {
-        sunIcon.style.display = 'none';
-        moonIcon.style.display = 'block';
+      function label(theme) {
+        return theme === 'dark' ? 'light mode' : 'dark mode';
       }
-    }
 
-    // Sync initial state
-    const currentTheme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const effectiveTheme = currentTheme || (prefersDark ? 'dark' : 'light');
-    if (effectiveTheme === 'dark') {
-      html.setAttribute('data-theme', 'dark');
-      body.setAttribute('data-theme', 'dark');
-      updateIcons('dark');
-    } else {
-      updateIcons('light');
-    }
+      toggle.textContent = label(html.getAttribute('data-theme') || 'light');
 
-    themeToggle.addEventListener('click', () => {
-      const isDark = html.getAttribute('data-theme') === 'dark';
-      if (isDark) {
-        html.removeAttribute('data-theme');
-        body.removeAttribute('data-theme');
-        localStorage.setItem('theme', 'light');
-        updateIcons('light');
-      } else {
-        html.setAttribute('data-theme', 'dark');
-        body.setAttribute('data-theme', 'dark');
-        localStorage.setItem('theme', 'dark');
-        updateIcons('dark');
-      }
-    });
-
-    document.querySelectorAll('pre').forEach((pre) => {
-      const button = document.createElement('button');
-      button.className = 'copy-button';
-      button.innerText = 'Copy';
-
-      button.addEventListener('click', () => {
-        const code = pre.querySelector('code').innerText;
-        navigator.clipboard.writeText(code).then(() => {
-          button.innerText = 'Copied!';
-          button.classList.add('copied');
-          setTimeout(() => {
-            button.innerText = 'Copy';
-            button.classList.remove('copied');
-          }, 2000);
-        });
+      toggle.addEventListener('click', () => {
+        const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', next);
+        try { localStorage.setItem('ts-theme', next); } catch (e) {}
+        toggle.textContent = label(next);
       });
 
-      pre.appendChild(button);
-    });
+      document.querySelectorAll('main pre').forEach((pre) => {
+        const code = pre.querySelector('code');
+        if (!code) return;
+        const langClass = [...code.classList].find((c) => c.startsWith('language-'));
+        const lang = langClass ? langClass.replace('language-', '') : '';
+
+        const figure = document.createElement('figure');
+        figure.className = 'code-figure';
+
+        const figcaption = document.createElement('figcaption');
+        const right = document.createElement('span');
+        right.className = 'figcaption-right';
+        const langSpan = document.createElement('span');
+        langSpan.className = 'code-lang';
+        langSpan.textContent = lang;
+
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'copy-button';
+        copyBtn.textContent = 'copy';
+        copyBtn.addEventListener('click', () => {
+          navigator.clipboard.writeText(code.textContent).then(() => {
+            copyBtn.textContent = 'copied';
+            copyBtn.classList.add('copied');
+            setTimeout(() => {
+              copyBtn.textContent = 'copy';
+              copyBtn.classList.remove('copied');
+            }, 1600);
+          });
+        });
+
+        right.appendChild(langSpan);
+        right.appendChild(copyBtn);
+        figcaption.appendChild(right);
+
+        pre.parentNode.insertBefore(figure, pre);
+        figure.appendChild(figcaption);
+        figure.appendChild(pre);
+      });
+
+      function highlight() {
+        if (!window.hljs) { setTimeout(highlight, 200); return; }
+        document.querySelectorAll('pre code').forEach((el) => {
+          try { window.hljs.highlightElement(el); } catch (e) {}
+        });
+      }
+      highlight();
+    })();
   </script>
 </body>
 

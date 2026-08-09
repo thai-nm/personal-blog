@@ -1,0 +1,33 @@
+{{ define "main" }}
+<div class="about-page">
+  <div class="about-hero">
+    {{ with .Site.Params.avatar }}
+    <div class="about-hero-portrait"><img src="{{ . }}" alt="{{ $.Site.Params.author.name }}"></div>
+    {{ end }}
+    <div class="about-hero-text">
+      <h1>{{ .Title }}</h1>
+      {{ with .Site.Params.description }}<p>{{ . }}</p>{{ end }}
+    </div>
+  </div>
+
+  <div class="post-content">
+    {{ .Content }}
+  </div>
+
+  {{ with .Site.Params.now }}
+  <section class="now-block">
+    <div class="label">Now</div>
+    <p>{{ . }}</p>
+  </section>
+  {{ end }}
+
+  <section>
+    <div class="topics-head" style="margin-bottom: 12px;">Elsewhere</div>
+    <div class="about-links">
+      {{ with .Site.Params.github }}<a href="{{ . }}" target="_blank" rel="noopener">github</a>{{ end }}
+      {{ with .Site.Params.linkedin }}<a href="{{ . }}" target="_blank" rel="noopener">linkedin</a>{{ end }}
+      <a href="/index.xml">rss</a>
+    </div>
+  </section>
+</div>
+{{ end }}

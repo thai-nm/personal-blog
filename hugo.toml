@@ -1,11 +1,21 @@
 baseURL = 'https://www.thainm.me'
 languageCode = 'en-us'
 title = "Thai Station"
-# theme = 'custom'
 
 [params]
     author.name = 'Thai Nguyen'
     description = 'DevOps, SRE, Cloud, System, etc.'
+    tagline = 'Cloud infrastructure · and everything else'
+    location = 'Hanoi · UTC+7'
     avatar = '/images/avatar.png'
+    aboutShort = 'DevOps Engineer in Hanoi. Notes so I stop solving things twice.'
     github = 'https://github.com/thai-nm'
     linkedin = 'https://linkedin.com/in/thai-nm'
+    now = ''
+
+[taxonomies]
+    tag = 'tags'
+
+[markup]
+    [markup.highlight]
+        codeFences = false

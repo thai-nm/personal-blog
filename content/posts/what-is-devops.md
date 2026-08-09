@@ -1,6 +1,9 @@
 ---
 title: "What is DevOps?"
 date: 2026-03-29
+categories: ["devops"]
+tags: ["devops", "career"]
+dek: "Three years in, outsourcing and product both, here is the definition I actually use — the pillars, the collaboration, and why it isn't for everyone."
 ---
 
 ## Introduction

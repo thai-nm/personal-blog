@@ -1,13 +1,4 @@
 {{ define "main" }}
-<div class="home">
-  <div class="posts-list">
-    {{ range (where .Site.RegularPages "Section" "posts") }}
-    <a href="{{ .Permalink }}" class="post-card">
-      <div class="post-meta">{{ .Date.Format "Jan 02, 2006" }} &nbsp;·&nbsp; {{ .ReadingTime }} MIN READ</div>
-      <h2>{{ .Title }}</h2>
-      <p>{{ .Summary | truncate 140 }}</p>
-    </a>
-    {{ end }}
-  </div>
-</div>
+{{ $pages := sort (where .Site.RegularPages "Section" "posts") "Date" "desc" }}
+{{ partial "post-list.html" (dict "pages" $pages "title" "Latest posts" "showFeature" true "limit" 5) }}
 {{ end }}

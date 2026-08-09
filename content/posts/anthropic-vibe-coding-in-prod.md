@@ -1,6 +1,9 @@
 ---
 title: "Anthropic: Vibe coding in prod"
 date: 2026-05-05
+categories: ["devops"]
+tags: ["ai", "devops"]
+dek: "A talk from the people behind Claude on shipping AI-assisted code to production, and why the old distrust of compilers feels familiar right now."
 ---
 
 I accidentially came across this video from a post on Facebook. As a DevOps engineer, one part of my job is to ensure production system to be reliable, scalable and secure, so the title caught me right away. If this comes from a random company, I'll skip in 1 second. But it's from Anthropic, father of Claude, so it is a very solid and practical source to learn about AI.

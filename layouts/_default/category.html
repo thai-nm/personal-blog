@@ -1,0 +1,6 @@
+{{ define "main" }}
+{{ $cat := .Params.category }}
+{{ $posts := where .Site.RegularPages "Section" "posts" }}
+{{ $pages := where (sort $posts "Date" "desc") "Params.categories" "intersect" (slice $cat) }}
+{{ partial "post-list.html" (dict "pages" $pages "title" (printf "/%s" $cat) "showFeature" (gt (len $pages) 0) "limit" 0) }}
+{{ end }}

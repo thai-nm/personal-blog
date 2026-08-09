@@ -1,0 +1,10 @@
+{{/* Returns a dict {tint, soft, category} for a page based on its first category. */}}
+{{ $category := "" }}
+{{ with .Params.categories }}{{ $category = index . 0 }}{{ end }}
+{{ $tint := "var(--devops)" }}
+{{ $soft := "var(--devops-soft)" }}
+{{ if eq $category "life" }}
+  {{ $tint = "var(--life)" }}
+  {{ $soft = "var(--life-soft)" }}
+{{ end }}
+{{ return (dict "tint" $tint "soft" $soft "category" $category) }}

@@ -1,18 +1,51 @@
 {{ define "main" }}
-<article class="post">
-  <div class="post-header" style="margin-bottom: 48px; text-align: center;">
-    <div class="post-meta" style="margin-bottom: 12px;">{{ .Date.Format "January 02, 2006" }} • {{ .ReadingTime }} MIN
-      READ</div>
+{{ $t := partial "tint.html" . }}
+<article class="post" style="--tint: {{ $t.tint }}; --soft: {{ $t.soft }};">
+  <a href="{{ with $t.category }}/{{ . }}/{{ else }}/{{ end }}" class="back-link">&larr; back to {{ with $t.category }}/{{ . }}{{ else }}home{{ end }}</a>
+
+  <header class="post-header">
+    <div class="feature-meta">
+      {{ with $t.category }}<span class="section-label">/{{ . }}</span>{{ end }}
+      <span>{{ .Date.Format "January 2, 2006" }}</span>
+      <span>{{ .ReadingTime }} min read</span>
+    </div>
     <h1>{{ .Title }}</h1>
-  </div>
+    {{ with (.Params.dek | default .Summary) }}<p class="post-dek">{{ . }}</p>{{ end }}
+  </header>
 
   <div class="post-content">
     {{ .Content }}
   </div>
 
-  <div style="margin-top: 80px; padding-top: 40px; border-top: 1px solid var(--border-color); text-align: center;">
-    <a href="/" style="color: var(--accent-color); text-decoration: none; font-weight: 600; font-size: 0.95rem;">← Back
-      to Home</a>
+  {{ with .Params.tags }}
+  <div class="post-tags">
+    {{ range . }}<span class="tag-chip">{{ . }}</span>{{ end }}
   </div>
+  {{ end }}
+
+  {{ $posts := sort (where .Site.RegularPages "Section" "posts") "Date" "desc" }}
+  {{ $idx := -1 }}
+  {{ range $i, $p := $posts }}{{ if eq $p.RelPermalink $.RelPermalink }}{{ $idx = $i }}{{ end }}{{ end }}
+  {{ $prev := "" }}
+  {{ $next := "" }}
+  {{ if gt $idx 0 }}{{ $prev = index $posts (sub $idx 1) }}{{ end }}
+  {{ if and (ge $idx 0) (lt $idx (sub (len $posts) 1)) }}{{ $next = index $posts (add $idx 1) }}{{ end }}
+
+  {{ if or $prev $next }}
+  <nav class="post-pager">
+    {{ with $prev }}
+    <a href="{{ .Permalink }}" class="prev">
+      <span class="pager-label">&larr; Newer</span>
+      <span class="pager-title">{{ .Title }}</span>
+    </a>
+    {{ end }}
+    {{ with $next }}
+    <a href="{{ .Permalink }}" class="next">
+      <span class="pager-label">Older &rarr;</span>
+      <span class="pager-title">{{ .Title }}</span>
+    </a>
+    {{ end }}
+  </nav>
+  {{ end }}
 </article>
 {{ end }}

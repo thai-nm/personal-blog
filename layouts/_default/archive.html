@@ -1,0 +1,26 @@
+{{ define "main" }}
+{{ $pages := sort (where .Site.RegularPages "Section" "posts") "Date" "desc" }}
+<h1 style="margin: 0 0 30px; font-size: 15px; font-family: 'JetBrains Mono', monospace; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase;">Archive</h1>
+
+{{ $currentMonth := "" }}
+{{ range $i, $p := $pages }}
+  {{ $month := $p.Date.Format "January 2006" }}
+  {{ if ne $month $currentMonth }}
+    {{ if ne $currentMonth "" }}</ul></section>{{ end }}
+    {{ $currentMonth = $month }}
+    <section class="archive-group">
+      <div class="archive-group-head">
+        <h2>{{ $month }}</h2>
+      </div>
+      <ul class="archive-list">
+  {{ end }}
+        {{ $t := partial "tint.html" $p }}
+        <li>
+          <a href="{{ $p.Permalink }}" class="archive-row">
+            <span class="section-label" style="color: {{ $t.tint }};">{{ with $t.category }}/{{ . }}{{ else }}&mdash;{{ end }}</span>
+            <span class="title">{{ $p.Title }}</span>
+          </a>
+        </li>
+  {{ if eq (add $i 1) (len $pages) }}</ul></section>{{ end }}
+{{ end }}
+{{ end }}

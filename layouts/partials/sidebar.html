@@ -1,0 +1,28 @@
+<aside class="sidebar">
+  <a href="/about/" class="about-card">
+    <div class="card-head"><span>About</span><span>&rarr;</span></div>
+    {{ with .Site.Params.avatar }}
+    <div class="about-portrait"><img src="{{ . }}" alt="{{ $.Site.Params.author.name }}" loading="lazy"></div>
+    {{ end }}
+    <p>{{ .Site.Params.aboutShort }}</p>
+  </a>
+
+  {{ with .Site.Params.now }}
+  <section class="now-card">
+    <div class="card-head">Now</div>
+    <p>{{ . }}</p>
+  </section>
+  {{ end }}
+
+  {{ $tags := .Site.Taxonomies.tags }}
+  {{ if gt (len $tags) 0 }}
+  <section class="topics-card">
+    <div class="topics-head">Topics</div>
+    <div class="topics-chips">
+      {{ range $tags.ByCount.Reverse }}
+      <a href="{{ .Page.Permalink }}" class="topic-chip">{{ .Page.Title }} &middot; {{ .Count }}</a>
+      {{ end }}
+    </div>
+  </section>
+  {{ end }}
+</aside>
