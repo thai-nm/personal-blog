@@ -1,5 +1,5 @@
 ---
-title: "Setting up Claude app with private remote MCP servers"
+title: "A way to set up remote MCP servers for Claude"
 date: 2026-08-09
 categories: ["devops"]
 tags: ["ai", "devops"]
