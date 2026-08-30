@@ -40,7 +40,7 @@ A pretty standard setup:
 
 There is one problem with this setup: According to Anthropic official documentation, Claude applications such as Claude on the Web or Claude Desktop app requires that the remote MCP server need to be publicly reachable.
 
-So we will need to expose our MCP server publicly (and securedly).
+So we will need to expose our MCP server publicly (and securely).
 
 I love [Excalidraw](https://github.com/excalidraw/excalidraw) (an open-source tool to sketch diagrams) and use it quite often. So I'm going to deploy its MCP server into my cluster.
 
@@ -50,35 +50,70 @@ I love [Excalidraw](https://github.com/excalidraw/excalidraw) (an open-source to
 
 Since I'm already using Cloudflare extensively, I decided to use [Cloudflare Tunnel](https://developers.cloudflare.com/tunnel/) to expose MCP servers.
 
-Cloudflare Tunnel can forward the traffic to pods, but I want my Traefik to remain my only entrypoint in the cluster (for the sake of observability and security), I decided to configure the tunnel to forward to Traefik instead of pods.
+Cloudflare Tunnel can forward the traffic to pods, but I want my Traefik to remain my only entrypoint in the cluster (for the sake of observability and security), I decided to configure the tunnel to forward to Traefik instead of pods. Also, I want to have only one domain for all MCP servers, so Traefik should be configured to route requests to upstream services based on request path.
 
 First, we will need to:
-- Containerize Excalidraw MCP server. The MCP server source code does not include any Dockerfile, but we can easily create one by asking Claude
-- Build and upload the container image to a image registry
-- Deploy the MCP server to the Kubernetes cluster with 1 Deployment, 1 ClusterIP Service, 1 HTTPRoute
+- Containerize Excalidraw MCP server. The [MCP server source code](https://github.com/excalidraw/excalidraw-mcp) does not include any Dockerfile, but we can easily create one by asking Claude
+- Build and upload the container image to an image registry
+- Deploy the Excalidraw MCP server to the Kubernetes cluster with 1 Deployment, 1 ClusterIP Service, 1 HTTPRoute. The HTTPRoute resource should be configured to accept traffic to `mcp.thainm.me` with `/excalidraw` request path.
+
+Here is the Dockerfile I used:
+
+```dockerfile
+FROM node:22-slim AS builder
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl ca-certificates unzip \
+    && rm -rf /var/lib/apt/lists/* \
+    && corepack enable \
+    && corepack prepare pnpm@10.11.0 --activate \
+    && curl -fsSL https://bun.sh/install | bash
+
+ENV PATH="/root/.bun/bin:${PATH}"
+
+WORKDIR /app
+
+COPY package.json pnpm-lock.yaml .npmrc ./
+RUN pnpm install --frozen-lockfile
+
+COPY . .
+RUN pnpm run build
+
+# ---
+
+FROM node:22-slim AS runtime
+
+ENV NODE_ENV=production \
+    PORT=3001
+
+WORKDIR /app
+
+COPY --from=builder /app/dist ./dist
+
+EXPOSE 3001
+
+CMD ["node", "dist/index.js"]
+
+```
 
 Next, I will need to configure Cloudflare:
 - Create a tunnel
 - Deploy `cloudflared` into the Kubernetes cluster and configure it to connect to my Cloudflare account
 - Configure the tunnel:
-  - Tunnel hostname: `mcp-excalidraw.thainm.me`
+  - Tunnel hostname: `mcp.thainm.me`
   - Upstream service URL (this is for cloudflared to forward the traffic): https://thefatcat-traefik.traefik.svc.cluster.local:443
 
 That's normally the case, but if we connect to the remote MCP server now, it will fail.
 
-There is one problem here. You can see the upstream service URL is targetting Traefik using HTTPS.
+The reason is: You can see the upstream service URL is targeting Traefik using HTTPS.
 During the TLS handshake, Cloudflare Tunnel (cloudflared) connects to upstream service (Traefik) with Traefik's Kubernetes FQDN as SNI value. 
 
 My Traefik is serving 2 TLS certificates: a Let's Encrypt certificate for `*.thainm.me` and a self-signed certificate for everything else.
 
-This means when Traefik receives the connection from cloudflared, it does not recognize the domain so it falls back to the self-signed certificate. When cloudflared got the certificate from Traefik, it checks if the certificate matches with the requested domain (`mcp-excalidraw.thainm.me`) and that does not match, so it stop the connection to prevent the client to connect to the wrong server.
+This means when Traefik receives the connection from cloudflared, it does not recognize the domain so it falls back to the self-signed certificate. When cloudflared gets the certificate from Traefik, it checks if the certificate matches the requested domain (`mcp.thainm.me`). It does not match, so cloudflared stops the connection to prevent the client from connecting to the wrong server.
 
 So we need to do an extra step:
 - In Cloudflare Zero Trust, we open Networks > Tunnel & Mesh > Choose Edit on the tunnel we created
-- Under TLS setting, change the value of Origin Server Name to `mcp-excalidraw.thainm.me`
+- Under TLS setting, change the value of Origin Server Name to `mcp.thainm.me`
 
-After that, we can now connect to our Excalidraw MCP server from anywhere (with internet access of course :) )
-
-## Next steps
-
-This shows limitations and improvement opportunities.
+After that, we can now connect to our remote Excalidraw MCP server from anywhere (with internet access of course :D)
